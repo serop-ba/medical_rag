@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+openai
+requests
+langchain
+pydantic
+langchain_ollama
+langchain_community
+langchain_qdrant
+langchainhub

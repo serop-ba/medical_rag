@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  ollama:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+
+  fastapi:
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+    container_name: fastapi
+    depends_on:
+      - ollama
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    volumes:
+      - .:/app  # Mount the current directory to /app inside the container
+
+  streamlit:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: streamlit
+    depends_on:
+      - backend
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
+
+    volumes:
+      - .:/app  # Mount the current directory to /app inside the container
+
+volumes:
+  ollama:
