@@ -53,13 +53,26 @@ Project Organization
 
 
 --------
-To start the server run
+# Setup
+To start make sure you run the script under src/models/train_model.py
+You need to create a .env file in the root directory for this and specify the location of the book you want to embed, the collection name, etc. 
+
+```
+python src/models/train_model.py
+```
+
+This will create the embeddings for you and save them in qdrant. 
+
+After that you can start the app using the following command
 ```
 docker-compose up --build -d 
 ```
-AFter starting the server you can now run the test notebook or the rag application, it will send all the request to the server
+----
+This will create
+- streamlit app on: http://0.0.0.0:8501
+-  fastapi server on: http://0.0.0.0:8000
+- ollama server on: http://0.0.0.0:11434 
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
 
 

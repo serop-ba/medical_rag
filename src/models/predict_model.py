@@ -18,14 +18,14 @@ file_name = "motor_neuron_disease.pdf"
 collection_name = file_name.split('.')[0]
 
 
-voyage_api_key = os.getenv('VOYAGEAI_API_KEY')
+# voyage_api_key = os.getenv('VOYAGEAI_API_KEY')
 
-embeddings = VoyageAIEmbeddings(
-    voyage_api_key=voyage_api_key, model="voyage-large-2", show_progress_bar=True, truncation=False, batch_size=100
-)
+# embeddings = VoyageAIEmbeddings(
+#     voyage_api_key=voyage_api_key, model="voyage-large-2", show_progress_bar=True, truncation=False, batch_size=100
+# )
 
 qdrant = QdrantVectorStore.from_existing_collection(
-    embedding=embeddings,
+    embedding= OllamaEmbeddings(model='phi3',show_progress=True),
     collection_name=collection_name,
     path='./data/processed/embedded_documents'
 
