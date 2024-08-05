@@ -10,21 +10,31 @@ from langchain_core.output_parsers import StrOutputParser
 import io
 from langchain import hub
 from langchain_qdrant import QdrantVectorStore
+from langchain_voyageai import VoyageAIEmbeddings
 from langchain.embeddings import OllamaEmbeddings
+import os 
 import logging
 
 app = FastAPI()
+file_name = "motor_neuron_disease.pdf"
+collection_name = file_name.split('.')[0]
+from dotenv import load_dotenv
+load_dotenv()
+voyage_api_key = os.getenv('VOYAGEAI_API_KEY')
 
+embeddings = VoyageAIEmbeddings(
+    voyage_api_key=voyage_api_key, model="voyage-large-2", show_progress_bar=True, truncation=False, batch_size=100
+)
 
 # Define the LangChain LLM
 llm = Ollama(
     base_url="http://ollama:11434/",
-    model='llama3'
+    model='phi3'
     # other params...
 )
 prompt = hub.pull("rlm/rag-prompt")
 
-qdrant = QdrantVectorStore.from_existing_collection(collection_name="podcast2", embedding=OllamaEmbeddings( base_url="http://ollama:11434/", model='llama3'), path="./local_qdrant_podcast" )
+qdrant = QdrantVectorStore.from_existing_collection(collection_name=collection_name, embedding=embeddings, path="/app/data/processed/embedded_documents/" )
 retriever = qdrant.as_retriever()
 
 class ChatRequest(BaseModel):
@@ -51,8 +61,9 @@ async def chat(request: ChatRequest):
     | StrOutputParser()
     )
     # Process user message with LangChain and ChatGPT
-    chatgpt_response = rag_chain.invoke({"query": user_message})
-    return ChatResponse(response=chatgpt_response)
+    response = rag_chain.invoke({"query": user_message})
+
+    return ChatResponse(response=response)
 
 def format_jobs(jobs):
     formatted = "Here are some job listings:\n"

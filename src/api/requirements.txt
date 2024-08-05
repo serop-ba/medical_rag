@@ -8,3 +8,6 @@ langchain_ollama
 langchain_community
 langchain_qdrant
 langchainhub
+langchain
+langchain-voyageai
+python-dotenv

@@ -1,0 +1,1 @@
+You need to add .env to create api key 

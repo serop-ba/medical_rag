@@ -1,12 +1,12 @@
 import streamlit as st
 import requests
 
-st.title("Podcast Summarizer ChatBot")
+st.title("Book ChatBot")
 
 # User input
-user_input = st.text_input("Ask Questions about the podcast")
+user_input = st.text_input("Ask Questions about the book")
 
-if st.button("Search"):
+if st.button("Ask Questions"):
     if user_input:
         # Make a request to the FastAPI server
         response = requests.post(
