@@ -4,9 +4,9 @@ openai
 requests
 langchain
 pydantic
-langchain_ollama
-langchain_community
-langchain_qdrant
-langchainhub
-langchain
+langchain_ollama==0.1.0
+langchain_community==0.2.10
+langchain_qdrant==0.1.2
+langchainhub==0.1.20
+langchain==0.2.11
 python-dotenv

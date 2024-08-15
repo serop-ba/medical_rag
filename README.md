@@ -1,69 +1,68 @@
 Medical_Rag
 ==============================
 
-A short description of the project.
+This repository uses ollama server to generate embeddings for PDF documents locally which then can be used in a chatbot. 
 
-Project Organization
-------------
+- The chatbot UI is written in streamlit. 
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+- The backend is written in fastapi. 
+
+- Langchain is used to call ollama and generate the embeddings and create the RAG application.
 
 
---------
 # Setup
-To start make sure you run the script under src/models/train_model.py
-You need to create a .env file in the root directory for this and specify the location of the book you want to embed, the collection name, etc. 
+You need to follow these steps:
+1. Start the ollama server locally:
+Either run 
+
+```
+docker-compose up --build -d 
+```
+Which will create all three micro services for you
+
+or 
+
+```
+docker build -t ollama . 
+
+docker run --publish 11434:11434 -d  ollama 
+```
+This will start a docker container with the ollama server running inside. 
+
+2. Generate embeddings 
+
+use the script under ./src/models/train_models.py
+
+Here you specify the file you want to generate embeddings from. 
+
+Currently we are only supporting PDF files. 
+
+
+You can install the requirements using 
+
+```
+pip install -r requirements.txt
+
+```
+you can start the script using 
+```
+python src/models/train_model.py
+```
+3. Test the chatbot 
+
+you can use the script in ./src/models/predict_model.py after you add your file
 
 ```
 python src/models/train_model.py
 ```
+This will generate the answer from the chatbot
 
-This will create the embeddings for you and save them in qdrant. 
+4. If you want to have the full app
+you can start the app using the following command
 
-After that you can start the app using the following command
+Before you build the app, you need to the copy the procceed embeddings to the app.
+
+I have a data folder with the proceeded embeddings and raw 
 ```
 docker-compose up --build -d 
 ```

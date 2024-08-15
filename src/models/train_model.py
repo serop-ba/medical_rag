@@ -1,18 +1,22 @@
 # Load web page
-import argparse
 from helper import pull_model
 from langchain.document_loaders import PyPDFLoader 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OllamaEmbeddings
-from dotenv import load_dotenv
-import os
-# Embed and stor
 from langchain_qdrant import QdrantVectorStore
 
+                        #### arguments #### 
+# Enter your file name and path here 
 file_name = "motor_neuron_disease.pdf"
+path = "./data/raw/{file_name}"
+# where to save the embeddings
+embeddings_path = "./data/processed/embedded_documents"
+# model to use, must be included in the ollama server
+model = 'llama3'
+
 collection_name = file_name.split('.')[0]
 
-loader = PyPDFLoader(f'./data/raw/{file_name}')
+loader = PyPDFLoader(path)
 data = loader.load()
 
 # Split into chunks 
@@ -20,25 +24,13 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=50
 all_splits = text_splitter.split_documents(data)
 print(f"Split into {len(all_splits)} chunks")
 
-
-
-# Load environment variables from .env file
-# load_dotenv()
-
-# Access the API key from the environment variables
-# voyage_api_key = os.getenv('VOYAGEAI_API_KEY')
-
-
-# embeddings = VoyageAIEmbeddings(
-#     voyage_api_key=voyage_api_key, model="voyage-large-2", show_progress_bar=True, truncation=False, batch_size=100
-# )
-
-# pull_model('llama3','localhost')
+# install the model in the container
+pull_model(model,'localhost')
 
 qdrant = QdrantVectorStore.from_documents(
     all_splits,
-    OllamaEmbeddings(model='phi3',show_progress=True),
-    path="./data/processed/embedded_documents",
+    OllamaEmbeddings(model='llama3',show_progress=True),
+    path=embeddings_path,
     collection_name=collection_name,
 )
 

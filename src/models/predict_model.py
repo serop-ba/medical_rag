@@ -6,8 +6,6 @@ import os
 import argparse
 from helper import pull_model
 from langchain_voyageai import VoyageAIEmbeddings
-
-
 from langchain.embeddings import OllamaEmbeddings # We can also try Ollama embeddings
 
 from langchain_qdrant import QdrantVectorStore
@@ -16,18 +14,15 @@ from langchain_ollama import ChatOllama
 
 file_name = "motor_neuron_disease.pdf"
 collection_name = file_name.split('.')[0]
+# take from train_model.py
+embedding_path = './data/processed/embedded_documents'
 
-
-# voyage_api_key = os.getenv('VOYAGEAI_API_KEY')
-
-# embeddings = VoyageAIEmbeddings(
-#     voyage_api_key=voyage_api_key, model="voyage-large-2", show_progress_bar=True, truncation=False, batch_size=100
-# )
+model = 'llama3'
 
 qdrant = QdrantVectorStore.from_existing_collection(
-    embedding= OllamaEmbeddings(model='phi3',show_progress=True),
+    embedding= OllamaEmbeddings(model=model,show_progress=True),
     collection_name=collection_name,
-    path='./data/processed/embedded_documents'
+    path=embedding_path
 
 )
 retriever = qdrant.as_retriever()
@@ -35,7 +30,6 @@ retriever = qdrant.as_retriever()
 
 prompt = hub.pull("rlm/rag-prompt")
 
-model = 'phi3'
 pull_model(model, service_name='localhost')
 
 llm = ChatOllama(
